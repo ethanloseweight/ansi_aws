@@ -1,0 +1,5 @@
+---
+# defaults file for aws
+AWS_PREFIX: ACIT4640
+REGION: us-west-2
+AV_ZONE: us-west-2a

@@ -1,0 +1,63 @@
+---
+- name: create VPC
+  ec2_vpc_net:
+    cidr_block: 10.42.0.0/16
+    name: "{{ AWS_PREFIX }}_VPC"
+    region: "{{ REGION }}"
+    state: present
+  register: vpc_data
+
+- name: create subnet
+  ec2_vpc_subnet:
+    cidr: 10.42.10.0/24
+    state: present
+    vpc_id: "{{ vpc_data.vpc.id }}"
+    tags:
+      Name: "{{ AWS_PREFIX }}_SUBNET"
+  register: subnet_data
+
+- name: create igw
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_data.vpc.id }}"
+    state: present
+  register: igw
+
+- name: create route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_data.vpc.id }}"
+    subnets:
+      - "{{ subnet_data.subnet.id }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+  register: public_route_table
+
+- name: create and use security group for HTTP and SSH
+  ec2_group:
+    name: "{{ AWS_PREFIX }}_SG"
+    description: for "{{ AWS_PREFIX }}"
+    vpc_id: "{{ vpc_data.vpc.id }}"
+    region: "{{ REGION }}"
+    rules:
+      - proto: tcp
+        ports:
+        - 80
+        cidr_ip: 0.0.0.0/0
+        rule_desc: allow all on port 80
+      - proto: tcp
+        ports:
+        - 22
+        cidr_ip: 0.0.0.0/0
+        rule_desc: allow all on port 22
+  register: security_group
+
+- name: create EC2
+  community.aws.ec2_instance:
+    name: "{{ AWS_PREFIX }}_APP"
+    key_name: "aws_private_key.pem"
+    vpc_subnet_id: "{{ subnet_data.subnet.id }}"
+    instance_type: t2.micro
+    security_group: "{{ security_group.group_id }}"
+    network:
+      assign_public_ip: true
+    image_id: ami-036d46416a34a611c

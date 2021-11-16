@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Create the AWS infrastructure
+      include_role:
+        name: aws
+        tasks_from: create.yml
+      tags:
+        - provision
+    - name: Clean the AWS infrastructure
+      include_role:
+        name: aws
+        tasks_from: clean.yml
+      tags:
+        - clean
+
+- hosts: aws_ec2
+  tasks:
+    - name: Provision the application
+      include_role:
+        name: "{{ item }}"
+      tags:
+        - provision
+      with_items:
+        - nodejs
+        - database
+        - backend
+        - frontend
