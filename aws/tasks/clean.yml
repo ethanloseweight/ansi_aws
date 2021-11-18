@@ -1,1 +1,46 @@
 ---
+- name: delete EC2
+  community.aws.ec2_instance:
+    state: absent
+    filters:
+      "key_name": "aws_private_key"
+      "name": "{{ AWS_PREFIX }}_EC2"
+
+- name: delete security group
+  ec2_group:
+    name: "{{ AWS_PREFIX }}_SG"
+    region: "{{ REGION }}"
+    description: for_ansible_provision
+    vpc_id: "{{ vpc_data.vpc.id }}"
+    tags:
+      Name: "{{ AWS_PREFIX }}_SG"
+    state: absent
+
+- name: delete route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_data.vpc.id }}"
+    tags:
+      Name: "{{ AWS_PREFIX }}_RTBL"
+    state: absent
+
+- name: delete internet gateway
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_data.vpc.id }}"
+    tags:
+      Name: "{{ AWS_PREFIX }}_IGW"
+    state: absent
+
+- name: delete subnet
+  ec2_vpc_subnet:
+    cidr: 10.100.10.0/24
+    vpc_id: "{{ vpc_data.vpc.id }}"
+    tags:
+      Name: "{{ AWS_PREFIX }}_SUBNET"
+    state: absent
+
+- name: delete VPC
+  ec2_vpc_net:
+    cidr_block: 10.100.0.0/16
+    name: "{{ AWS_PREFIX }}_VPC"
+    region: "{{ REGION }}"
+    state: absent

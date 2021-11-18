@@ -1,0 +1,71 @@
+---
+# tasks file for backend
+- name: create backend user if DNE
+  become: true
+  user:
+    name: "{{ backend_user }}"
+
+- name: create backend dict if DNE
+  become: true
+  ansible.builtin.file:
+    path: "{{ backend_path }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ backend_user }}"
+
+- name: read-write git
+  become: yes
+  become_user: "{{ backend_user }}"
+  ansible.builtin.git:
+    repo: https://github.com/bezkoder/nodejs-express-sequelize-mysql.git
+    dest: "{{ backend_path }}"
+    force: yes
+
+- name: get NodeJS 
+  get_url: 
+    url: https://deb.nodesource.com/setup_14.x
+    dest: /home/ubuntu/install_nodejs_script
+
+- name: install NodeJS
+  become: yes
+  ansible.builtin.shell:
+    cmd: bash /home/ubuntu/install_nodejs_script
+
+- name: check NodeJS
+  become: true
+  package:
+    name: nodejs
+    state: present
+
+- name: intall packages based on package.json
+  become: yes
+  become_user: "{{ backend_user }}"
+  community.general.npm:
+    path: "{{ backend_path }}"
+    state: present
+
+- name: copy the modified db configuration file
+  become: yes
+  become_user: "{{ backend_user }}"
+  copy:
+    src: db.config.js
+    dest: "{{ backend_path }}"/app/config/db.config.js
+
+- name: copy the backend service file
+  become: yes
+  copy:
+    src: tutorials.service
+    dest: /etc/systemd/system/tutorials.service
+
+- name: force reload configs
+  become: yes
+  systemd:
+    daemon_reload: yes
+
+- name: restart tutorials service
+  become: true
+  service:
+    name: tutorials
+    daemon-reload: yes
+    enabled: yes
+    state: started

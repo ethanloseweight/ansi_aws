@@ -1,0 +1,12 @@
+[Unit]
+Description=Tutorials backend
+After=network.target
+
+[Service]
+WorkingDirectory="{{ backend_path }}"
+Type=simple
+ExecStart=/usr/bin/node "{{ backend_path }}"/server.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

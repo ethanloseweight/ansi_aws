@@ -1,0 +1,65 @@
+---
+# tasks file for frontend
+- name: get NodeJS
+  get_url:
+    url: https://deb.nodesource.com/setup_14.x
+    dest: /home/ubuntu/install_nodejs_script
+
+- name: installation NodeJS
+  become: yes
+  ansible.builtin.shell:
+    cmd: bash /home/ubuntu/install_nodejs_script
+
+- name: read-write git
+    become: yes
+  ansible.builtin.git:
+    repo: https://github.com/bezkoder/react-crud-web-api.git
+    dest: "{{ frontend_path }}"
+    force: yes
+
+- name: copy http-common.js
+  become: true
+  copy:
+    src: http-common.js
+    dest: "{{ frontend_path }}"/src/http-common.js
+
+- name: install packages based on package.json
+  become: yes
+  community.general.npm:
+    path: "{{ frontend_path }}"
+    state: present
+
+- name: script build
+  become: yes
+  ansible.builtin.shell:
+    cmd: npm --prefix "{{ frontend_path }}" run-script build
+
+- name: install Nginx if DNE
+  become: true
+  package:
+    name: nginx
+    state: present
+
+- name: copy Nginx configuration file
+  become: true
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/sites-enabled/default
+
+- name: run Nginx
+  become: true
+  systemd:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: force reload configs
+  become: true
+  systemd:
+    daemon_reload: yes
+
+- name: Restart Nginx
+  become: true
+  systemd:
+    name: nginx
+    state: restarted

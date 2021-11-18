@@ -1,0 +1,5 @@
+---
+# defaults file for frontend
+frontend_path: /home/ubuntu/frontend
+http_api_location: /api
+backend_url: http://localhost:8080

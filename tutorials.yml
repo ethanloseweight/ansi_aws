@@ -7,41 +7,41 @@
         tasks_from: create.yml
       tags:
         - create
-    # - name: Clean the AWS infrastructure
-    #   import_role:
-    #     name: aws
-    #     tasks_from: clean.yml
-    #   tags:
-    #     - clean
-    # - name: Gather the AWS infrastructure infomation
-    #   import_role:
-    #     name: aws
-    #     tasks_from: info.yml
-    #   tags:
-    #     - info
+    - name: Clean the AWS infrastructure
+      import_role:
+        name: aws
+        tasks_from: clean.yml
+      tags:
+        - clean
+    - name: Gather the AWS infrastructure infomation
+      import_role:
+        name: aws
+        tasks_from: info.yml
+      tags:
+        - info
 
-# - hosts: aws_ec2
-#   tasks:
-#     - name: provision database
-#       import_role:
-#         name: database
-#         task_from: /database/task/main.yml
-#       tags:
-#         - database
-#         - provision
+- hosts: aws_ec2
+  tasks:
+    - name: provision database
+      import_role:
+        name: database
+        task_from: /database/task/main.yml
+      tags:
+        - database
+        - provision
 
-#     - name: provision backend
-#       import_role:
-#         name: backend
-#         task_from: /backend/task/main.yml
-#       tags:
-#         - backend
-#         - provision
+    - name: provision backend
+      import_role:
+        name: backend
+        task_from: /backend/task/main.yml
+      tags:
+        - backend
+        - provision
 
-#     - name: provision frontend
-#       import_role:
-#         name: frontend
-#         task_from: /frontend/task/main.yml
-#       tags:
-#         - frontend
-#         - provision
+    - name: provision frontend
+      import_role:
+        name: frontend
+        task_from: /frontend/task/main.yml
+      tags:
+        - frontend
+        - provision

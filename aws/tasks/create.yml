@@ -59,11 +59,12 @@
 
 - name: create EC2
   community.aws.ec2_instance:
-    name: "{{ AWS_PREFIX }}_EC2"
-    key_name: "aws_private_key"
-    vpc_subnet_id: "{{ subnet_data.subnet.id }}"
+    image_id: ami-036d46416a34a611c
     instance_type: t2.micro
+    key_name: "aws_private_key"
+    name: "{{ AWS_PREFIX }}_EC2"
+    vpc_subnet_id: "{{ subnet_data.subnet.id }}"
     security_group: "{{ security_group.group_id }}"
     network:
-      assign_public_ip: true
-    image_id: ami-036d46416a34a611c
+      assign_public_ip: yes
+

@@ -1,0 +1,6 @@
+---
+# defaults file for database
+db_name: tutorials
+db_host: localhost
+db_password: password
+db_user: backend
