@@ -1,7 +1,7 @@
 ---
 - name: create VPC
   ec2_vpc_net:
-    cidr_block: 10.42.0.0/16
+    cidr_block: 10.100.0.0/16
     name: "{{ AWS_PREFIX }}_VPC"
     region: "{{ REGION }}"
     state: present
@@ -9,7 +9,7 @@
 
 - name: create subnet
   ec2_vpc_subnet:
-    cidr: 10.42.10.0/24
+    cidr: 10.100.10.0/24
     state: present
     vpc_id: "{{ vpc_data.vpc.id }}"
     tags:
@@ -39,7 +39,7 @@
 - name: create and use security group for HTTP and SSH
   ec2_group:
     name: "{{ AWS_PREFIX }}_SG"
-    description: for "{{ AWS_PREFIX }}"
+    description: for ansible provision
     vpc_id: "{{ vpc_data.vpc.id }}"
     region: "{{ REGION }}"
     rules:
