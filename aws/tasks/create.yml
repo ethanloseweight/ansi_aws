@@ -20,6 +20,8 @@
   ec2_vpc_igw:
     vpc_id: "{{ vpc_data.vpc.id }}"
     state: present
+    tags:
+      Name: "{{ AWS_PREFIX }}_igx"
   register: igw
 
 - name: create route table
@@ -30,6 +32,8 @@
     routes:
       - dest: 0.0.0.0/0
         gateway_id: "{{ igw.gateway_id }}"
+    tags:
+      Name: "{{ AWS_PREFIX }}_RtTb"
   register: public_route_table
 
 - name: create and use security group for HTTP and SSH
@@ -49,6 +53,8 @@
         - 22
         cidr_ip: 0.0.0.0/0
         rule_desc: allow all on port 22
+    tags:
+      Name: "{{ AWS_PREFIX }}_SecGp"
   register: security_group
 
 - name: create EC2
