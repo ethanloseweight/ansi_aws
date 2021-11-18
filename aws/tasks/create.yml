@@ -60,7 +60,7 @@
 - name: create EC2
   community.aws.ec2_instance:
     name: "{{ AWS_PREFIX }}_APP"
-    key_name: "aws_private_key.pem"
+    key_name: "aws_private_key"
     vpc_subnet_id: "{{ subnet_data.subnet.id }}"
     instance_type: t2.micro
     security_group: "{{ security_group.group_id }}"
