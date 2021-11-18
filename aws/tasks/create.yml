@@ -4,13 +4,13 @@
     cidr_block: 10.100.0.0/16
     name: "{{ AWS_PREFIX }}_VPC"
     region: "{{ REGION }}"
-    state: present
+    # state: present
   register: vpc_data
 
 - name: create subnet
   ec2_vpc_subnet:
     cidr: 10.100.10.0/24
-    state: present
+    # state: present
     vpc_id: "{{ vpc_data.vpc.id }}"
     tags:
       Name: "{{ AWS_PREFIX }}_SUBNET"
@@ -19,7 +19,7 @@
 - name: create igw
   ec2_vpc_igw:
     vpc_id: "{{ vpc_data.vpc.id }}"
-    state: present
+    # state: present
     tags:
       Name: "{{ AWS_PREFIX }}_igx"
   register: igw
@@ -36,10 +36,10 @@
       Name: "{{ AWS_PREFIX }}_RtTb"
   register: public_route_table
 
-- name: create and use security group for HTTP and SSH
+- name: create security group for HTTP and SSH
   ec2_group:
     name: "{{ AWS_PREFIX }}_SG"
-    description: for ansible provision
+    description: for_ansible_provision
     vpc_id: "{{ vpc_data.vpc.id }}"
     region: "{{ REGION }}"
     rules:
@@ -54,7 +54,7 @@
         cidr_ip: 0.0.0.0/0
         rule_desc: allow all on port 22
     tags:
-      Name: "{{ AWS_PREFIX }}_SecGp"
+      Name: "{{ AWS_PREFIX }}_SG"
   register: security_group
 
 - name: create EC2
