@@ -13,6 +13,12 @@
         tasks_from: clean.yml
       tags:
         - clean
+    - name: Gather the AWS infrastructure infomation
+      import_roles:
+        name: aws
+        tasks_from: info.yml
+      tags:
+        - info
 
 - hosts: aws_ec2
   tasks:
