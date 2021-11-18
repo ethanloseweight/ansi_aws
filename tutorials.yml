@@ -26,14 +26,15 @@
 
     - name: provision backend
       import_role:
-        task_from: /frontend/task/main.yml
+        name: backend
+        task_from: /backend/task/main.yml
       tags:
         - backend
         - provision
 
-  tasks:
     - name: provision frontend
       import_role:
+        name: frontend
         task_from: /frontend/task/main.yml
       tags:
         - frontend
