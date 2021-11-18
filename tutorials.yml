@@ -16,35 +16,25 @@
 
 - hosts: aws_ec2
   tasks:
-    - name: Provision b
-      include_role:
-        name: "{{ item }}"
+    - name: provision database
+      inmport_role:
+        name: database
+        task_from: /database/task/main.yml
       tags:
         - database
         - provision
-      with_items:
-        - database
 
-- hosts: aws_ec2
-  tasks:
-    - name: prv backend
+    - name: provision backend
       import_role:
-        name: "{{ item }}"
-        task_from: backend/~
+        task_from: /frontend/task/main.yml
       tags:
         - backend
         - provision
-      with_item:
-        - backend
 
-- hosts: aws_ec2
   tasks:
-    - name: prv frontend
+    - name: provision frontend
       import_role:
-        name: "{{ item }}"
-        task_from: backend/~
+        task_from: /frontend/task/main.yml
       tags:
         - frontend
         - provision
-      with_item:
-        - frontend
