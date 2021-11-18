@@ -21,7 +21,7 @@
     vpc_id: "{{ vpc_data.vpc.id }}"
     # state: present
     tags:
-      Name: "{{ AWS_PREFIX }}_igx"
+      Name: "{{ AWS_PREFIX }}_IGW"
   register: igw
 
 - name: create route table
@@ -33,7 +33,7 @@
       - dest: 0.0.0.0/0
         gateway_id: "{{ igw.gateway_id }}"
     tags:
-      Name: "{{ AWS_PREFIX }}_RtTb"
+      Name: "{{ AWS_PREFIX }}_RTBL"
   register: public_route_table
 
 - name: create security group for HTTP and SSH
@@ -59,7 +59,7 @@
 
 - name: create EC2
   community.aws.ec2_instance:
-    name: "{{ AWS_PREFIX }}_APP"
+    name: "{{ AWS_PREFIX }}_EC2"
     key_name: "aws_private_key"
     vpc_subnet_id: "{{ subnet_data.subnet.id }}"
     instance_type: t2.micro
