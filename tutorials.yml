@@ -2,27 +2,49 @@
 - hosts: localhost
   tasks:
     - name: Create the AWS infrastructure
-      include_role:
+      import_role:
         name: aws
         tasks_from: create.yml
       tags:
-        - provision
-#     - name: Clean the AWS infrastructure
-#       include_role:
-#         name: aws
-#         tasks_from: clean.yml
-#       tags:
-#         - clean
+        - create
+    - name: Clean the AWS infrastructure
+      import_role:
+        name: aws
+        tasks_from: clean.yml
+      tags:
+        - clean
 
-# - hosts: aws_ec2
-#   tasks:
-#     - name: Provision the application
-#       include_role:
-#         name: "{{ item }}"
-#       tags:
-#         - provision
-#       with_items:
-#         - nodejs
-#         - database
-#         - backend
-#         - frontend
+- hosts: aws_ec2
+  tasks:
+    - name: Provision b
+      include_role:
+        name: "{{ item }}"
+      tags:
+        - database
+        - provision
+      with_items:
+        - database
+
+- hosts: aws_ec2
+  tasks:
+    - name: prv backend
+      import_role:
+        name: "{{ item }}"
+        task_from: backend/~
+      tags:
+        - backend
+        - provision
+      with_item:
+        - backend
+
+- hosts: aws_ec2
+  tasks:
+    - name: prv frontend
+      import_role:
+        name: "{{ item }}"
+        task_from: backend/~
+      tags:
+        - frontend
+        - provision
+      with_item:
+        - frontend
